@@ -1,21 +1,5 @@
-######################### Get/Set/Show working directory ###########################
-
-# Get working directory, where your scripts, data, output files are saved
-getwd() 
-
-# Name my working directory, an example
-myWD = "W:/Data/IntroR"
-
-# Set my working directory as myWD, an example
-setwd(myWD)
-
-# Show the names of the files, folders under the directory 'myWD', an exmaple
-dir(myWD)
-
-################################ Open/Save Data ####################################
-
 # Open *.csv files and read the data into the object mydata by function read.table, an example
-mydata <- read.table("YahooEnergy.csv", header=T, sep=",")
+mydata <- read.table("data/finance_stats/YahooEnergy.csv", header=T, sep=",")
 
 # show the first row of mydata
 mydata[1:10,]
@@ -29,7 +13,7 @@ colnames(newdata)
 colnames(newdata) <- c("Symbol","Name","P","V","Hi","Lo","Date","Time","PP")
 
 # Save the newdata in a CSV file under the current working directory, an example
-write.table(newdata, "newdata.csv", row.names=F, col.names=T)
+write.table(newdata, "Finance_Statistics/yahoo_energy_newdata.csv", row.names=F, col.names=T)
 
 #################### Download Stock Data #######################
 library(quantmod)  # build library for package 'quantmod', which has been installed  
@@ -69,9 +53,9 @@ save(XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV, XLY, file="Sector ETFs 2010-2013.RD
  library(RQuantLib)
  library(quantmod)
  
- SPcompany = read.csv("SP500 companies.csv", header=T, sep=",")
+ SPcompany = read.csv("data/finance_stats/SP500 companies.csv", header=T, sep=",")
  colnames(SPcompany)
- table(SPcompany[,"GICS.Sector"])  # summary of the # of companies in each sector
+ table(SPcompany[,"GICSector"])  # summary of the # of companies in each sector
  
  Tickers   = as.vector(SPcompany[,1])  # get the 500 tickers
  Tickers[which(Tickers=="BRK.B")] = "BRK-B"  # Yahoo finance use "BRK-B" instead of "BRK.B"
@@ -114,25 +98,23 @@ save(XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV, XLY, file="Sector ETFs 2010-2013.RD
 
 #################### Load S&P500 Stocks data #######################
 library(quantmod)
-load("SP500 company dailyReturn 2008.RData")
+load("Finance_Statistics/SP500 company dailyReturn 2008.RData")
 
-SPcompany = read.table("SP500 companies.csv", header=T, sep=",")
+SPcompany = read.table("data/finance_stats/SP500 companies.csv", header=T, sep=",")
 colnames(SPcompany)
-table(SPcompany[,"GICS.Sector"])  # summary of the # of companies in each sector
+table(SPcompany[,"GICSector"])  # summary of the # of companies in each sector
 
 #  # calculate daily returns for all 500 stocks
-# SP500dailyReturn = t(apply(Close, MARGIN=1, function(a) t(dailyReturn(a))))
+# SP500dailyReturn = t(apply(SP500dailyReturn, MARGIN=1, function(a) t(dailyReturn(a))))
 # SP500dailyReturn = SP500dailyReturn[,-1]
 # colnames(SP500dailyReturn) = colnames(Close)[-1]
 
 #################### Compute the Efficient Frontier #######################
 library(lattice)
 library(MASS)
-setwd('W:/RCode/Utils')
-source('heatmap.R')
-setwd(myWD)
+source('Finance_Statistics/heatmap.R')
 
-choose <- which(SPcompany[,"GICS.Sector"]=="Telecommunications Services")
+choose <- which(SPcompany[,"GICSector"]=="Telecommunications Services")
 choosedates <- which(as.Date(colnames(SP500dailyReturn)) > as.Date('2013-01-01') &
                   as.Date(colnames(SP500dailyReturn)) < as.Date('2013-04-01') ) 
 
@@ -161,7 +143,7 @@ efficientsigma <- function(mup,a,b,c) {
 mup <- seq(0.00001, 0.008, 0.000005)
 sigmap <- sapply(mup, function(t) efficientsigma(t,a,b,c))
 
-png("TeleServicesEfficient.png", width=1024, height=768)
+png("Finance_Statistics/TeleServicesEfficient.png", width=1024, height=768)
 plot(sigmap*sqrt(252), mup*252, col="white", cex.axis=1.5, cex.lab=1.5, cex.main=2, xlim=c(0,0.80),
      xlab="annualized volatility",ylab="annualized return",
      main="Telecomm Services (from 2013-01 to 2013-03)")
@@ -181,7 +163,7 @@ muT = t(omegaT) %*% mu *252
 sigmaT = sqrt(t(omegaT) %*% Sigma %*% omegaT * 252)  
 sharpeT = (muT-rf)/sigmaT
 
-png("TeleServicesTangent.png", width=1024, height=768)
+png("Finance_Statistics/TeleServicesTangent.png", width=1024, height=768)
 plot(sigmap*sqrt(252), mup*252, col="white", cex.axis=1.5, cex.lab=1.5, cex.main=2, xlim=c(0,0.80),
      xlab="annualized volatility",ylab="annualized return",
      main="Telecomm Services (from 2013-01 to 2013-03)")
