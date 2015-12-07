@@ -1,6 +1,3 @@
-
-install.packages('quantmod')
-
 library(quantmod)
 stocklist = c('PPG',  'STZ',  'AIG',  'LB'   ,'AXP'  ,'RRC'  ,'ORCL', 'AVB',  'NTRS', 'HIG',  'MAS','STX','KMI','BHI','FFIV', 'PRU',  'WEC'  ,'MAC',"MKC","CMI")
 
@@ -28,11 +25,9 @@ for (i in 1:20){
 
 ################################ placeholder ######################
 
-install.packages('copula')
 library(copula)   # for copula functions
 
-
-### Fit Copula based on data2
+### Fit Copula based on data1
 fnorm = fitCopula(data=data1,  
                   method = "ml", optim.method="BFGS", 
                   copula=normalCopula(-0.3, dim=20), start=0)
@@ -84,8 +79,7 @@ set.seed(2015)
 
 rand_mvdc <-rMvdc(n=10, mvdc=mvdc_norm)
 
-par(frow(c(2))
-    pairs(rand_mvdc)
+pairs(rand_mvdc)
     
     
     
