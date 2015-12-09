@@ -56,22 +56,21 @@ hist(data1[,2],main="Normal transformed returns",breaks=15,xlab='STZ')
 ################################ placeholder ######################
 library(copula)   # for copula functions
 
-
 ### Fit normalCopula
-fnorm = fitCopula(data=data1[,1:4],  
+fnorm = fitCopula(data=data1[,1:20],  
                   method = "irho", optim.method="BFGS", 
-                  copula=normalCopula(dim=4, dispstr="un"))
+                  copula=normalCopula(dim=20, dispstr="un"))
 
-### Estimating df parameter for t-copula
-cor_tau = cor(data1, method="kendall")
-t_omega = sin(pi*cor_tau/2)
-cop_t_dim2 = tCopula(t_omega, dim = 20, dispstr = "un", df = 190)
-
-ft2 = fitCopula(cop_t_dim2, data=data1,
-                method = "ml", optim.method="L-BFGS-B", 
-                start=c(t_omega,5),lower=c(0,2.5),upper=c(.5,15) )
-
-ncopula <- normalCopula(dim=20, param = c())
+        ### Estimating df parameter for t-copula
+        cor_tau = cor(data1, method="kendall")
+        t_omega = sin(pi*cor_tau/2)
+        cop_t_dim2 = tCopula(t_omega, dim = 20, dispstr = "un", df = 190)
+        
+        ft2 = fitCopula(cop_t_dim2, data=data1,
+                        method = "ml", optim.method="L-BFGS-B", 
+                        start=c(t_omega,5),lower=c(0,2.5),upper=c(.5,15) )
+        
+        ncopula <- normalCopula(dim=20, param = c())
 
 ########## Best Copula ###############
 bestcopula <- fnorm
@@ -101,24 +100,35 @@ list <-   list(list(mean= mean1[1],sd=sd1[1]),
                list(mean= mean1[20], sd=sd1[20]))
 
 
-mvdc_norm <- mvdc(copula = fnorm, margins = rep("norm", 20), paramMargins = list)
+#mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm),dim=20,dispstr="un"), rep("norm", 4), 
+#                  list(list(mean=0.503,sd=0.271),list(mean=0.494,sd=0.276),list(mean=0.500,sd=0.269),
+#                       list(mean=.0499,sd=0.277)))
 
-mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm),dim=4,dispstr="un"), rep("norm", 4), list(list(mean=0.503,sd=0.271),list(mean=0.494,sd=0.276),list(mean=0.500,sd=0.269),list(mean=.0499,sd=0.277)))
+mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm),dim=20,dispstr="un"), rep("norm", 20), list)
 
-set.seed(2015)
+    # simulate 10000 daily returns
+    set.seed(2015)
+    rand_mvdc <- rMvdc(n=10, mvdc=mvdc_norm)
+    #pairs(rand_mvdc)
+    
+    # Based on the simulation data, we make a portfolio with each stock equally weighted
+    meanRet <- apply(rand_mvdc, 1, mean)
+    x <- meanRet[order(meanRet)]
+    x[10000*0.05]
+    # assuem we invest $1000,000, what is the Var and ES
+    invest = 1000000
+    VaR5perc.port <- invest*x[10000*0.05]
+    ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
 
-rand_mvdc <- rMvdc(n=1000, mvdc=mvdc_norm)
-pairs(rand_mvdc)
 
 
+## assume our portofolio has 20 stocks and they are Equally Weighted
+    # calculate mean and sd 
+    meanRet <- mean(apply(dat, 2, mean))
+    sdRet <- sqrt(sum(apply(dat, 2, sd)^2)/400)
 
-####################### Equal Weighted Portfolio ########################
-
-meanRet <- mean(apply(dat, 2, mean))
-sdRet <- sqrt(sum(apply(dat, 2, sd)^2)/400)
-
-####################  Investiment $1000,000 ###########################
-invest = 1000000
-VaR5perc.port <- invest*(-meanRet+1.645*sdRet)
-ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
+    # assuem we invest $1000,000, what is the Var and ES using parametric method 
+    invest = 1000000
+    VaR5perc.port <- invest*(-meanRet+1.645*sdRet)
+    ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
 

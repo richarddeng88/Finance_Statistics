@@ -3,23 +3,12 @@ library(xts)
 library(timeDate)
 library(MASS)
 
-## specify the path for the Data
-dir_RM_db = "W:/Data/RM"
-dir_code = "W:/Rcode/Utils"
-
 ## specify the output directory for figures
 dir_figures = paste(dir_RM_db, "figures", sep="/")
 
 ## set the working directory and load dependent scripts
-setwd(dir_code)
 source('VaR_unit.R')
 source('ES_unit.R')
-
-## set the working directory
-setwd(dir_RM_db)
-
-## get the name of the file
-filename = dir()
 
 ## load the GTAT data
 load("GTAT.RData")
