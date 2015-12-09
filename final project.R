@@ -7,7 +7,7 @@ par(mfrow=c(4,5))
 for (i in stocklist) {
     
     x = get(getSymbols(i, src = 'yahoo', from = '2014-12-04', adjust=TRUE))
-    xr = dailyReturn(x)
+    xr = dailyReturn(x, type='log')
     #plot(xr, main=i)
     #plot(x[,4],main=i)
     assign(i, xr)
