@@ -7,7 +7,7 @@ par(mfrow=c(4,5))
 for (i in stocklist) {
     
     x = get(getSymbols(i, src = 'yahoo', from = '2014-12-04', adjust=TRUE))
-    xr = dailyReturn(x)
+    xr = dailyReturn(x, type = "log")
     #plot(xr, main=i)
     #plot(x[,4],main=i)
     assign(i, xr)
@@ -20,6 +20,7 @@ dat <- as.data.frame(dat)
 names(dat) <- stocklist 
 
 # heatmap
+library(lattice)
 myheatmap <- function(myMAT,low,high,uselabel){
     colorFun <- colorRampPalette(c("blue","white","red")) 
     
@@ -47,12 +48,14 @@ data1 <- matrix(0,dim(dat)[1],20)
 for (i in 1:20){
     data1[,i] <- pnorm(dat[,i], mean=est_mean[i], sd=est_sd[i])
 }
+range(as.vector(data1))
 
 # show transformed histgram compared to the original one
 par(mfrow=c(1,2))
 #hist(dat[,1], main="original daily returns",breaks=15,xlab='PPG')
 hist(data1[,1],main="Normal transformed returns",breaks=15,xlab='PPG')
 hist(data1[,2],main="Normal transformed returns",breaks=15,xlab='STZ')
+
 ################################ placeholder ######################
 library(copula)   # for copula functions
 
@@ -108,7 +111,7 @@ mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm),dim=20,dispstr="un"), rep("n
 
     # simulate 10000 daily returns
     set.seed(2015)
-    rand_mvdc <- rMvdc(n=10, mvdc=mvdc_norm)
+    rand_mvdc <- rMvdc(n=1000, mvdc=mvdc_norm)
     #pairs(rand_mvdc)
     
     # Based on the simulation data, we make a portfolio with each stock equally weighted

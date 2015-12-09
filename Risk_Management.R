@@ -7,18 +7,17 @@ library(MASS)
 dir_figures = paste(dir_RM_db, "figures", sep="/")
 
 ## set the working directory and load dependent scripts
-source('VaR_unit.R')
-source('ES_unit.R')
+source('Finance_Statistics/uni/VaR_unit.R')
+source('Finance_Statistics/uni/ES_unit.R')
 
 ## load the GTAT data
-load("GTAT.RData")
+load("Finance_Statistics/GTAT.RData")
 price = GTAT[,'GTAT.Close']
 
 plot(price, main='price dynamics', ylab='$/share')
 
 ## plot the 1-day PnL assuming long 1 unit share
-plot(-diff(price), main='1-day Loss (-PnL for longing 1 share)',
-     ylab='$/share')
+plot(-diff(price), main='1-day Loss (-PnL for longing 1 share)', ylab='$/share')
 
 windowsize = 125
 alpha = 0.01
