@@ -8,21 +8,36 @@ for (i in stocklist) {
     
     x = get(getSymbols(i, src = 'yahoo', from = '2014-12-04', adjust=TRUE))
     xr = dailyReturn(x)
-    plot(xr, main=i)
+    #plot(xr, main=i)
     #plot(x[,4],main=i)
     assign(i, xr)
     
 }
 
-    # daily return plot for 20 stocks
-    
-    
 
 dat <- cbind(PPG, STZ,	AIG,LB,	AXP,RRC,ORCL,AVB,NTRS,	HIG,MAS,STX,KMI,BHI,FFIV,PRU,WEC,MAC,MKC,CMI)
 dat <- as.data.frame(dat)
 names(dat) <- stocklist 
 
+# heatmap
+myheatmap <- function(myMAT,low,high,uselabel){
+    colorFun <- colorRampPalette(c("blue","white","red")) 
+    
+    b <- boxplot(myMAT, plot = FALSE)
+    thr <- c(low,high)
+    colbins <- 100
+    step <- abs(thr[2] - thr[1])/50
+    
+    myAT <- seq(thr[1], thr[2], step)
+    
+    myCOLregions <- colorFun(length(myAT))
+    
+    levelplot(myMAT, at = myAT, col.regions = myCOLregions, 
+              scales=list(x=list(rot=90)), labels=uselabel)
+}
 
+correlation <- cor(dat)
+myheatmap(correlation,-1,1,F)
 
 library(MASS)
 est_mean <- apply(dat,2, function(x){as.numeric(fitdistr(x,"normal")$estimate)[1]})
@@ -33,7 +48,11 @@ for (i in 1:20){
     data1[,i] <- pnorm(dat[,i], mean=est_mean[i], sd=est_sd[i])
 }
 
-
+# show transformed histgram compared to the original one
+par(mfrow=c(1,2))
+#hist(dat[,1], main="original daily returns",breaks=15,xlab='PPG')
+hist(data1[,1],main="Normal transformed returns",breaks=15,xlab='PPG')
+hist(data1[,2],main="Normal transformed returns",breaks=15,xlab='STZ')
 ################################ placeholder ######################
 library(copula)   # for copula functions
 

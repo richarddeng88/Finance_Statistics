@@ -1,12 +1,3 @@
-# Name my working directory, an example
-myWD = "W:/Data/S&P500"
-
-# Set my working directory as myWD, an example
-setwd(myWD)
-
-# Show the names of the files, folders under the directory 'myWD', an exmaple
-dir(myWD)
-
 library(copula)   # for copula functions
 library(fGarch)   # need for standardized t density
 library(MASS)     # need for fitdistr and kde2d
@@ -30,11 +21,11 @@ ATT_Ret = SP500dailyReturn[46,]
 VZ_Ret  = SP500dailyReturn[468,]
 S_Ret   = SP500dailyReturn[421,]                    ### Sprint
 
-png("ATT vs VZ.png", width=1024, height=768)
+#png("ATT vs VZ.png", width=1024, height=768)
 plot(ATT_Ret, VZ_Ret, pch=16, cex.axis=1,cex.lab=1,cex.main=1,
      xlab="returns on AT&T", ylab="returns on Verizon",
      main="Scatter Plot")
-dev.off()
+#dev.off()
 
 par(mfrow=c(3,1))
 subTS = zoo(ATT_Ret, mydates)
@@ -56,11 +47,11 @@ data1 = cbind( pnorm(ATT_Ret, mean=est.ATT[1], sd=est.ATT[2]),
 
 pairs(cbind(ATT_Ret,VZ_Ret,S_Ret),pch=20)
 
-png("Histogram_Normal_Transformed.png", width=1024, height=768)
+#png("Histogram_Normal_Transformed.png", width=1024, height=768)
 par(mfrow=c(1,2))
 hist(data1[,1],main="Normal transformed returns",breaks=15,xlab='AT&T')
 hist(data1[,2],main="Normal transformed returns",breaks=15,xlab='Verizon')
-dev.off()
+#dev.off()
 
 #plot(data1[,1],data1[,2], pch=20,
 #     xlab="Normal-transformed AT&T returns",

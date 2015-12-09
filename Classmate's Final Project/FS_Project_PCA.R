@@ -4,9 +4,6 @@ setwd("D:/Baruch/Financial Statistics/Financial_Statistics")
 
 # Install and Load Packages -----------------------------------------------
 
-install.packages("quantmod")
-install.packages("RQuantLib")
-install.packages("MASS")
 library(quantmod)
 library(RQuantLib)
 library(MASS)

@@ -113,7 +113,7 @@ table(SPcompany[,"GICSector"])  # summary of the # of companies in each sector
 library(lattice)
 library(MASS)
 source('Finance_Statistics/heatmap.R')
-
+SPcompany = read.csv("data/finance_stats/SP500 companies.csv", header=T, sep=",")
 choose <- which(SPcompany[,"GICSector"]=="Telecommunications Services")
 choosedates <- which(as.Date(colnames(SP500dailyReturn)) > as.Date('2013-01-01') &
                   as.Date(colnames(SP500dailyReturn)) < as.Date('2013-04-01') ) 
