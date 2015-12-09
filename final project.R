@@ -123,8 +123,6 @@ mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm),dim=20,dispstr="un"), rep("n
     VaR5perc.port <- -invest*x[number*0.05]
     ES5per.port <- -invest*(mean(x[1:number*0.05]))
 
-
-
 ## assume our portofolio has 20 stocks and they are Equally Weighted
     # calculate mean and sd 
     meanRet <- mean(apply(dat, 2, mean))

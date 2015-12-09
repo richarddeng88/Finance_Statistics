@@ -107,7 +107,8 @@ mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm_itau),dim=20,dispstr="un"), r
                                                                                                      list(mean= mean1[20], sd=sd1[20])))
 ######################################## Simulation ################################
 set.seed(2015)
-rand_mvdc <- rMvdc(n=10000, mvdc=mvdc_norm)
+number=10000
+rand_mvdc <- rMvdc(n=number, mvdc=mvdc_norm)
 
 par(mfrow=c(4,5))
 for (i in 1:20){
