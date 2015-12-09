@@ -61,7 +61,7 @@ library(copula)   # for copula functions
 
 ### Fit normalCopula
 fnorm = fitCopula(data=data1[,1:20],  
-                  method = "irho", optim.method="BFGS", 
+                  method = "itau", optim.method="BFGS", 
                   copula=normalCopula(dim=20, dispstr="un"))
 
         ### Estimating df parameter for t-copula
@@ -79,8 +79,8 @@ fnorm = fitCopula(data=data1[,1:20],
 bestcopula <- fnorm
 
 ########## VaR ########################
-mean1 <- apply(data1,2, mean)
-sd1 <- apply(data1,2,sd)
+mean1 <- apply(dat,2, mean)
+sd1 <- apply(dat,2,sd)
 list <-   list(list(mean= mean1[1],sd=sd1[1]),
                list(mean= mean1[2], sd=sd1[2]),
                list(mean= mean1[3], sd=sd1[3]),
@@ -111,17 +111,17 @@ mvdc_norm <- mvdc(copula = normalCopula(coef(fnorm),dim=20,dispstr="un"), rep("n
 
     # simulate 10000 daily returns
     set.seed(2015)
-    rand_mvdc <- rMvdc(n=1000, mvdc=mvdc_norm)
+    number=10000
+    rand_mvdc <- rMvdc(n=number, mvdc=mvdc_norm)
     #pairs(rand_mvdc)
     
     # Based on the simulation data, we make a portfolio with each stock equally weighted
     meanRet <- apply(rand_mvdc, 1, mean)
     x <- meanRet[order(meanRet)]
-    x[10000*0.05]
     # assuem we invest $1000,000, what is the Var and ES
     invest = 1000000
-    VaR5perc.port <- invest*x[10000*0.05]
-    ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
+    VaR5perc.port <- -invest*x[number*0.05]
+    ES5per.port <- -invest*(mean(x[1:number*0.05]))
 
 
 
