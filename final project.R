@@ -2,8 +2,7 @@ library(quantmod)
 library(copula)   # for copula functions
 library(fGarch)   # need for standardized t density
 library(MASS)     # need for fitdistr and kde2d
-library(fCopulae) # additional copula functions (pempiricalCopula
-# and ellipticalCopulaFit)
+library(fCopulae) # additional copula functions
 library(quantmod)
 library(xts)
 library(timeDate)
