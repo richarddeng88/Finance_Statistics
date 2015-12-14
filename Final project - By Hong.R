@@ -154,6 +154,7 @@ rand.var <- rand.var/400
 sdRet <- sqrt(rand.var)
 
 
+
 ### a different way to calculate the var and es
 # simulate 10000 daily returns
         set.seed(2015)
@@ -181,6 +182,17 @@ VaR5perc.port <- invest*(-meanRet+1.645*sdRet)
 ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
 
 
+
+
+
+### original data
+meanRet <- mean(apply(dat, 2, mean))
+sdRet <- sqrt(sum(cov(dat))/400)
+
+# assuem we invest $1000,000, what is the Var and ES using parametric method 
+invest = 1000000
+VaR5perc.port <- invest*(-meanRet+1.645*sdRet)
+ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
 
 
 
