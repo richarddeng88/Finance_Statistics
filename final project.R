@@ -26,7 +26,7 @@ library(timeDate)
             
             x = get(getSymbols(i, src = 'yahoo', from = '2014-12-04', adjust=TRUE))
             xr = dailyReturn(x, type = "log")
-            plot(xr, main=i)
+            #plot(xr, main=i)
             #plot(x[,4],main=i)
             assign(i, xr)
         }
@@ -138,7 +138,7 @@ library(timeDate)
         x <- meanRet[order(meanRet)]
         # assuem we invest $1000,000, what is the Var and ES
         invest = 1000000
-        VaR_5perc_simulatino <- -invest*x[number*0.05]
+        VaR_5perc_simulation <- -invest*x[number*0.05]
         ES_5prc_simulation <- -invest*(mean(x[1:number*0.05]))
 
 
