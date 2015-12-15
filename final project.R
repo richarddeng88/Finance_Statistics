@@ -13,6 +13,7 @@ library(timeDate)
     table(SPcompany[,"GICSector"])  
     stocklist = c('AMZN',  'COH',  'EXPE',  'MCD'   ,'NKE'  ,'RL'  ,'CCE', 'PEP',  'AXP', 
                   'AIG',  'BLK','COF','GS','JPM','MCO', 'WFC',  'FDX'  ,'MMM','AAPL','FB')
+    
 # consumer discretionary industry:  amazon, coach, expedia, 
 # consumer staples industry :       McDonald's, NIKE, Ralph Lauren, coca-cola, Pepsico.inc, 
 # financial industry:               American express, AIG, black stone, capital one, goldman sachs group, JPmogan, moody's, wells fargo, 
@@ -20,46 +21,46 @@ library(timeDate)
 # information technology industry : apple, facebook. 
 
 ### DATA PREPROCESSING
-    par(mfrow=c(4,5))
-    for (i in stocklist) {
-        
-        x = get(getSymbols(i, src = 'yahoo', from = '2014-12-04', adjust=TRUE))
-        xr = dailyReturn(x, type = "log")
-        plot(xr, main=i)
-        #plot(x[,4],main=i)
-        assign(i, xr)
-    }
-    
-    dat <- cbind(AMZN,  COH,  EXPE, MCD ,NKE ,RL ,CCE, PEP, AXP, 
-                 AIG, BLK,COF,GS,JPM,MCO, WFC, FDX ,MMM,AAPL,FB)
-    dat <- as.data.frame(dat)
-    names(dat) <- stocklist 
-
-        # heatmap
-        library(lattice)
-        myheatmap <- function(myMAT,low,high,uselabel){
-            colorFun <- colorRampPalette(c("blue","white","red")) 
+        par(mfrow=c(4,5))
+        for (i in stocklist) {
             
-            b <- boxplot(myMAT, plot = FALSE)
-            thr <- c(low,high)
-            colbins <- 100
-            step <- abs(thr[2] - thr[1])/50
-            
-            myAT <- seq(thr[1], thr[2], step)
-            
-            myCOLregions <- colorFun(length(myAT))
-            
-            levelplot(myMAT, at = myAT, col.regions = myCOLregions, 
-                      scales=list(x=list(rot=90)), labels=uselabel)
+            x = get(getSymbols(i, src = 'yahoo', from = '2014-12-04', adjust=TRUE))
+            xr = dailyReturn(x, type = "log")
+            plot(xr, main=i)
+            #plot(x[,4],main=i)
+            assign(i, xr)
         }
         
-        correlation <- cor(dat)
-        myheatmap(correlation,-1,1,F)
+        dat <- cbind(AMZN,  COH,  EXPE, MCD ,NKE ,RL ,CCE, PEP, AXP, 
+                     AIG, BLK,COF,GS,JPM,MCO, WFC, FDX ,MMM,AAPL,FB)
+        dat <- as.data.frame(dat)
+        names(dat) <- stocklist 
 
-        # QQ - plot
-        for (i in 1:20){
-            qqnorm(dat[,2])
-        }
+                # heatmap
+                library(lattice)
+                myheatmap <- function(myMAT,low,high,uselabel){
+                    colorFun <- colorRampPalette(c("blue","white","red")) 
+                    
+                    b <- boxplot(myMAT, plot = FALSE)
+                    thr <- c(low,high)
+                    colbins <- 100
+                    step <- abs(thr[2] - thr[1])/50
+                    
+                    myAT <- seq(thr[1], thr[2], step)
+                    
+                    myCOLregions <- colorFun(length(myAT))
+                    
+                    levelplot(myMAT, at = myAT, col.regions = myCOLregions, 
+                              scales=list(x=list(rot=90)), labels=uselabel)
+                }
+                
+                correlation <- cor(dat)
+                myheatmap(correlation,-1,1,F)
+        
+                # QQ - plot
+                for (i in 1:20){
+                    qqnorm(dat[,2])
+                }
         
  
 # DATA TRANSFORMATION       
@@ -73,21 +74,20 @@ library(timeDate)
         for (i in 1:20){
             data1[,i] <- pnorm(dat[,i], mean=est_mean[i], sd=est_sd[i])
         }
-            
-            # show transformed histgram compared to the original one
-            par(mfrow=c(1,2))
-            #hist(dat[,1], main="original daily returns",breaks=15,xlab='PPG')
-            hist(data1[,1],main="Normal transformed returns",breaks=15,xlab='PPG')
-            hist(data1[,2],main="Normal transformed returns",breaks=15,xlab='STZ')
-            
-            # transfored data histgram
-            for (i in 1:20)
-            {
-                hist(dat[,i], xlab="ori data",main = stocklist[i])
-            }
-            
+                
+                # transformed histgram compared to the original one
+                par(mfrow=c(1,2))
+                #hist(dat[,1], main="original daily returns",breaks=15,xlab='PPG')
+                hist(data1[,1],main="Normal transformed returns",breaks=15,xlab='PPG')
+                hist(data1[,2],main="Normal transformed returns",breaks=15,xlab='STZ')
+                
+                # transfored data histgram
+                for (i in 1:20)
+                {
+                    hist(dat[,i], xlab="ori data",main = stocklist[i])
+                }
+                
     
-
 
 ### MODEL BUILDING -  Construct Gaussian copula (normalCopula)
         # estimating parameters for normalCopula model
@@ -133,22 +133,19 @@ library(timeDate)
             }
     
 # CALCULATION : 
-    # Estimation of VaR and ES based on the simulation data -  we assume an equally weighted portfolio of 20 stocks
+        # Estimation of VaR and ES based on the simulation data -  we assume an equally weighted portfolio of 20 stocks
         meanRet <- apply(rand_mvdc, 1, mean)
         x <- meanRet[order(meanRet)]
         # assuem we invest $1000,000, what is the Var and ES
         invest = 1000000
-        VaR5perc.port <- -invest*x[number*0.05]
-        ES5per.port <- -invest*(mean(x[1:number*0.05]))
+        VaR_5perc_simulatino <- -invest*x[number*0.05]
+        ES_5prc_simulation <- -invest*(mean(x[1:number*0.05]))
 
 
-    ## Parametric estimation of VaR and ES -  assume an equally weighted portfolio of 20 stocks
-        # calculate mean and sd 
+        ## Parametric estimation of VaR and ES -  assume an equally weighted portfolio of 20 stocks
         meanRet <- mean(apply(dat, 2, mean))
         sdRet <- sqrt(sum(apply(dat, 2, sd)^2)/400)
-    
-        # assuem we invest $1000,000, what is the Var and ES using parametric method 
         invest = 1000000
-        VaR5perc.port <- invest*(-meanRet+1.645*sdRet)
-        ES5per.port <- invest*(-meanRet+0.103*sdRet/0.05)
+        VaR_5perc <- invest*(-meanRet+1.645*sdRet)
+        ES5_per <- invest*(-meanRet+0.103*sdRet/0.05)
 
