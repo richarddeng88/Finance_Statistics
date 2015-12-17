@@ -144,7 +144,7 @@ library(timeDate)
 
         ## Parametric estimation of VaR and ES -  assume an equally weighted portfolio of 20 stocks
         meanRet <- mean(apply(dat, 2, mean))
-        sdRet <- sqrt(sum(apply(dat, 2, sd)^2)/400)
+        sdRet <- sqrt(sum(cov(dat)/400))
         invest = 1000000
         VaR_5perc <- invest*(-meanRet+1.645*sdRet)
         ES5_per <- invest*(-meanRet+0.103*sdRet/0.05)
